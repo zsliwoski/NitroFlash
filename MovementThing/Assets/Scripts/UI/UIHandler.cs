@@ -40,16 +40,18 @@ public class UIHandler : MonoBehaviour {
 	}
 
 	void Start(){
-		gameMode = FindObjectOfType<GamemodeBase> ();
 	}
 
 	void Update () {
 		UpdatePlayerStatus ();
 		UpdateGrappleIcon ();
-		UpdateGamemodeText ();
-		UpdateTimer ();
+		if (gameMode != null) {
+			UpdateGamemodeText ();
+			UpdateTimer ();
+		} else {
+			gameMode = FindObjectOfType<GamemodeBase> ();
+		}
 	}
-
 	void UpdateGamemodeText(){
 		if (gameMode != null) {
 			gameModeType.text = gameMode.gamemodeTypes [gameMode.networkObject.gamemodeType];

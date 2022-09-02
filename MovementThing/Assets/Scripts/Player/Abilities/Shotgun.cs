@@ -63,19 +63,11 @@ public class Shotgun : MonoBehaviour {
 						print ("angle was right");
 						if (Physics.Linecast (transform.position, c.transform.position,affected)) {
 							int dam = Random.Range (damage - 5, damage + 5);
-							bool death = false;
 							PlayerMovement epm = c.GetComponent<PlayerMovement> ();
 
-							if ((epm.networkObject.health - dam) <= 0) {
-								death = true;
-							}
-							if (death) {
-								owner.networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__GET_KILL, BeardedManStudios.Forge.Networking.Receivers.ServerAndOwner, epm.playerName);
-							}
-
 							if (!owner.networkObject.isDead) {
-								object[] rpcArgs = { dam, owner.playerName };
-								epm.networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__TAKE_DAMAGE, BeardedManStudios.Forge.Networking.Receivers.ServerAndOwner, rpcArgs);
+								object[] rpcArgs = { dam, owner.playerName, owner.networkObject.NetworkId};
+								epm.networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__TAKE_DAMAGE, BeardedManStudios.Forge.Networking.Receivers.Owner, rpcArgs);
 							}
 								
 							print (c.name + " : hit with " + dam);

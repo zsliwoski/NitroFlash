@@ -124,6 +124,9 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		if (DisconnectEvent != null){
 			DisconnectEvent.Invoke();
 		}
+
+		gam.RemovePlayerFromRegistry (this);
+		
 		networkObject.ClearRpcBuffer ();
 		if (networkObject != null){
 			networkObject.Destroy ();
@@ -138,13 +141,10 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		playerScoreStruct.kills = 0;
 		playerScoreStruct.deaths = 0;
 		playerScoreStruct.score = 0;
-		if (networkObject.IsServer) {
-			gam = FindObjectOfType<GameController> ();
-			//networkObject.Networker.pingReceived += (double ping, NetWorker sender) => {print(ping.ToString());};
-		}
+		gam = FindObjectOfType<GameController> ();
+		gam.AddPlayerToRegistry (this);
 		if (networkObject.IsOwner) {
-			networkObject.Networker.Ping();
-			gam = FindObjectOfType<GameController> ();
+			
 			camObj = Instantiate (camPref,playerView);
 			GameObject u = Instantiate (ui);
 
@@ -480,18 +480,19 @@ public class PlayerMovement : NetworkPlayerBehavior{
 
 	//RPC Functions
 	public override void Server_TakeDamage(RpcArgs args){
-		if (!networkObject.IsServer) {
-			return;
-		}
+		//if (!networkObject.IsServer) {
+		//	return;
+		//}
 		int dam = args.GetNext<int> ();
 		string instigator = args.GetNext<string> ();
-
+		uint instigatorID = args.GetNext<uint> ();
 		GetComponent<PlayerHealth> ().TakeDamage (dam);
 		networkObject.health = GetComponent<PlayerHealth> ().curHealth;
 		if (!SERVER_isDead) {
 			if (GetComponent<PlayerHealth> ().curHealth <= 0) {
 				SERVER_isDead = true;
-				networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__DEATH, BeardedManStudios.Forge.Networking.Receivers.ServerAndOwner, instigator);
+				object[] rpcArgs = { instigator, instigatorID };
+				networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__DEATH, BeardedManStudios.Forge.Networking.Receivers.Owner, rpcArgs);
 			} else {
 				networkObject.SendRpc (NetworkPlayerBehavior.RPC_MULTICAST__TAKE_DAMAGE, BeardedManStudios.Forge.Networking.Receivers.All);
 			}
@@ -503,35 +504,40 @@ public class PlayerMovement : NetworkPlayerBehavior{
 			networkObject.death = playerScoreStruct.deaths;
 		}
 
-		if (!networkObject.IsServer) {
-			return;
-		}
+		//if (!networkObject.IsServer) {
+		//	return;
+		//}
 
 		string instigator = args.GetNext<string> ();
+		uint instigatorID = args.GetNext<uint> ();
+		print(System.String.Format("{0}",instigatorID));
+		if (instigatorID != 0) {
+			NetworkPlayerBehavior killer = gam.GetNetworkPlayerFromID (instigatorID);
+			if (killer) {
+				killer.networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__GET_KILL, BeardedManStudios.Forge.Networking.Receivers.Owner, playerName);
+			}
+		}
 		object[] multicastArgs = {networkObject.position, networkObject.rotation, instigator};
 		networkObject.SendRpc (NetworkPlayerBehavior.RPC_MULTICAST__DEATH, BeardedManStudios.Forge.Networking.Receivers.All, multicastArgs);
 
 		//TODO: TEMPORARY MAKE SPAWNING RELIANT ON PLAYER RESPAWN REQUEST
-		networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__RESPAWN, BeardedManStudios.Forge.Networking.Receivers.ServerAndOwner);
+		networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__RESPAWN, BeardedManStudios.Forge.Networking.Receivers.Owner);
 	}
 	public override void Server_GetKill(RpcArgs args){
-		if (networkObject.IsOwner) {	
-			playerScoreStruct.kills += 1;
-			networkObject.kills = playerScoreStruct.kills;
-		}
+		print ("DEE DEE DEE");	
+		playerScoreStruct.kills += 1;
+		networkObject.kills = playerScoreStruct.kills;
+		
 
-		if (!networkObject.IsServer) {
-			return;
-		}	
+		//if (!networkObject.IsServer) {
+		//	return;
+		//}	
 
-		string playerKilled = args.GetNext<string> ();
-		object[] multicastArgs = {playerKilled};
-		networkObject.SendRpc (NetworkPlayerBehavior.RPC_CLIENT__GET_KILL, BeardedManStudios.Forge.Networking.Receivers.Owner, multicastArgs);
+		//string playerKilled = args.GetNext<string> ();
+		//object[] multicastArgs = {playerKilled};
+		//networkObject.SendRpc (NetworkPlayerBehavior.RPC_CLIENT__GET_KILL, BeardedManStudios.Forge.Networking.Receivers.Owner, multicastArgs);
 	}
 	public override void Server_Respawn(RpcArgs args){
-		if (!networkObject.IsServer) {
-			return;
-		}
 		SERVER_isDead = false;
 		networkObject.SendRpc (NetworkPlayerBehavior.RPC_MULTICAST__RESPAWN, BeardedManStudios.Forge.Networking.Receivers.All);
 	}
@@ -587,11 +593,11 @@ public class PlayerMovement : NetworkPlayerBehavior{
 	void OnTriggerEnter(Collider other){
 		switch (other.tag) {
 		case "DeathVolume":
-			if (networkObject.IsOwner) {
+			if (networkObject.IsServer) {
 				int damage = 2000;
-
-				object[] multicastArgs= {damage, "<<Environment>>"};
-				networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__TAKE_DAMAGE, BeardedManStudios.Forge.Networking.Receivers.Server, multicastArgs);
+				print ("DAMAGE");
+				object[] multicastArgs= {damage, "<<Environment>>", 0u};
+				networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__TAKE_DAMAGE, BeardedManStudios.Forge.Networking.Receivers.ServerAndOwner, multicastArgs);
 			}
 			break;
 		}

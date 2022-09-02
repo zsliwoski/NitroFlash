@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BeardedManStudios.Forge.Networking.Generated;
 using UnityEngine;
 using UnityEngine.UI;
 public class ScoreBoard : MonoBehaviour {
@@ -7,20 +8,30 @@ public class ScoreBoard : MonoBehaviour {
 	public GameObject contentWindow;
 	public GameObject visibilityWindow;
 	public GameObject scoreCardPrefab;
+	public GameController gc;
 	public List<UI_PlayerScoreItem> scoreCardItems;
 
 	// Use this for initialization
 	void Start () {
 		scoreCardItems = new List<UI_PlayerScoreItem> ();
-		PlayerMovement[] existingPlayers = FindObjectsOfType<PlayerMovement> ();
-		foreach (PlayerMovement p in existingPlayers) {
-			AddCard (p);
-		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (gc == null) {
+			TryBindGameController ();
+		}
+	}
 
+	public void TryBindGameController(){
+		gc = FindObjectOfType<GameController> ();
+		if (gc != null) {
+			foreach (NetworkPlayerBehavior p in gc.playerObjects) {
+				AddCard ((PlayerMovement)p);
+			}
+			gc.PlayerJoinRosterEvent += (NetworkPlayerBehavior player) => (AddCard((PlayerMovement)player));
+			gc.PlayerLeaveRosterEvent += (NetworkPlayerBehavior player) => (RemoveCard((PlayerMovement)player));
+		}
 	}
 	public void ShowBoard(bool visible){
 		visibilityWindow.SetActive(visible);

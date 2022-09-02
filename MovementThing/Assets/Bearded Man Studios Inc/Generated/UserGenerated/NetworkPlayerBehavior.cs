@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"int\", \"string\"][\"string\"][\"string\"][][][\"Vector3\", \"Quaternion\", \"string\"][\"string\"][][]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"damage\", \"instigator\"][\"instigator\"][\"killed\"][][][\"position\", \"rotation\", \"instigator\"][\"killed\"][][]]")]
+	[GeneratedRPC("{\"types\":[[\"int\", \"string\", \"uint\"][\"string\", \"uint\"][\"string\"][][][\"Vector3\", \"Quaternion\", \"string\"][\"string\"][][]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"damage\", \"instigator\", \"instigatorID\"][\"instigator\", \"instigatorID\"][\"killed\"][][][\"position\", \"rotation\", \"instigator\"][\"killed\"][][]]")]
 	public abstract partial class NetworkPlayerBehavior : NetworkBehavior
 	{
 		public const byte RPC_SERVER__TAKE_DAMAGE = 0 + 5;
@@ -30,8 +30,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.AttachedBehavior = this;
 
 			base.SetupHelperRpcs(networkObject);
-			networkObject.RegisterRpc("Server_TakeDamage", Server_TakeDamage, typeof(int), typeof(string));
-			networkObject.RegisterRpc("Server_Death", Server_Death, typeof(string));
+			networkObject.RegisterRpc("Server_TakeDamage", Server_TakeDamage, typeof(int), typeof(string), typeof(uint));
+			networkObject.RegisterRpc("Server_Death", Server_Death, typeof(string), typeof(uint));
 			networkObject.RegisterRpc("Server_GetKill", Server_GetKill, typeof(string));
 			networkObject.RegisterRpc("Server_Respawn", Server_Respawn);
 			networkObject.RegisterRpc("Multicast_GunFired", Multicast_GunFired);
@@ -117,11 +117,13 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		/// Arguments:
 		/// int damage
 		/// string instigator
+		/// uint instigatorID
 		/// </summary>
 		public abstract void Server_TakeDamage(RpcArgs args);
 		/// <summary>
 		/// Arguments:
 		/// string instigator
+		/// uint instigatorID
 		/// </summary>
 		public abstract void Server_Death(RpcArgs args);
 		/// <summary>
