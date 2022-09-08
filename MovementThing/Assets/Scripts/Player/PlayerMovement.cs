@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.Forge.Networking.Unity;
@@ -24,8 +25,10 @@ public class PlayerMovement : NetworkPlayerBehavior{
 	public delegate void JumpDelegate(bool midAir);
 	public event JumpDelegate JumpEvent;
 
+	GamemodeBase gamemodeRef;
+
 	//network stuff
-	public string playerName = "Player name here";
+	public string playerName = "";
 	public bool SERVER_isDead = false;
 	public PlayerScoreStruct playerScoreStruct;
 
@@ -68,7 +71,7 @@ public class PlayerMovement : NetworkPlayerBehavior{
 	public CharacterController cc;
 
 	public bool canMove = true;
-
+	bool wantLockCursor = true;
 	//Camera Rotation
 	private float rotX = 0.0f;
 	private float rotY = 0.0f;
@@ -101,12 +104,30 @@ public class PlayerMovement : NetworkPlayerBehavior{
 
 	private Cmd cmd; //stores player movement requests
 
-	//if the player is dead
-	//private bool isDead = false;
+	private bool mouseMovementFrozen = false;
 
 	//controls where the player spawns
 	private Vector3 playerSpawnPos;
 	private Quaternion playerSpawnRot;
+
+	public void FreezeMouseInput (bool shouldFreezeMouse){
+		mouseMovementFrozen = shouldFreezeMouse;
+	}
+
+	public bool GetMouseInputFrozen(){
+		return mouseMovementFrozen;
+	}
+
+	public void SetCursorLock(bool wantLock){
+		wantLockCursor = wantLock;
+		if (wantLock) {
+			Cursor.visible = false;
+			Cursor.lockState = CursorLockMode.Locked;
+		} else {
+			Cursor.visible = true;
+			Cursor.lockState = CursorLockMode.None;
+		}
+	}
 
 	public bool VisualGrounded(){
 		RaycastHit hit;
@@ -148,6 +169,9 @@ public class PlayerMovement : NetworkPlayerBehavior{
 			camObj = Instantiate (camPref,playerView);
 			GameObject u = Instantiate (ui);
 
+			UI_MatchEndCard card = FindObjectOfType<UI_MatchEndCard>();
+			card.SetOwner (this);
+
 			uH = u.GetComponent<UIHandler> ();
 			uH.ph = GetComponent<PlayerHealth> ();
 			uH.sh = camObj.GetComponent<Shotgun> ();
@@ -155,8 +179,6 @@ public class PlayerMovement : NetworkPlayerBehavior{
 			uH.gr = GetComponentInChildren<Grapple>();
 			head.enabled = false;
 
-			//hiding and locking the cursor
-			Cursor.lockState = CursorLockMode.Locked;
 			gameObject.tag = "Player";
 			gameObject.layer = LayerMask.NameToLayer ("Self");
 			//puts camera into capsule collider
@@ -165,6 +187,23 @@ public class PlayerMovement : NetworkPlayerBehavior{
 				transform.position.z);
 
 			cmd = new Cmd ();
+
+			playerName = PlayerPrefs.GetString ("PlayerName");
+			if (playerName == "") {
+				string newName = NameGenerator.GenerateName ();
+				playerName = newName;
+				PlayerPrefs.SetString ("PlayerName", newName);
+			}
+
+			networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__SET_NAME, Receivers.Server, playerName);
+
+			//clears scores
+			gamemodeRef = FindObjectOfType<GamemodeBase>();
+			gamemodeRef.RoundStartEvent += () => {
+				networkObject.score = 0;
+				networkObject.SendRpc(NetworkPlayerBehavior.RPC_MULTICAST__RESPAWN, true, Receivers.Owner);
+			};
+			gamemodeRef.RoundEndEvent += (winningTeam) => {print(string.Format("{0} wins!!!",winningTeam));};
 		} else {
 			//TODO:Change based on team
 			gameObject.tag = "Enemy";
@@ -197,24 +236,26 @@ public class PlayerMovement : NetworkPlayerBehavior{
 			networkObject.Networker.Disconnect (false);
 		}
 		//make sure that the cursor is locked onto the screen
-		if (Cursor.lockState != CursorLockMode.Locked) {
+		if (Cursor.lockState != CursorLockMode.Locked && wantLockCursor) {
 			if (Input.GetMouseButtonDown (0)) {
+				Cursor.visible = false;
 				Cursor.lockState = CursorLockMode.Locked;
 			}
 		}
 		if (canMove) {
-			//camera movement
-			rotX -= Input.GetAxisRaw ("Mouse Y") * xMouseSensitivity * 0.02f;
-			rotY += Input.GetAxisRaw ("Mouse X") * yMouseSensitivity * 0.02f;
+			if (mouseMovementFrozen == false){
+				//camera movement
+				rotX -= Input.GetAxisRaw ("Mouse Y") * xMouseSensitivity * 0.02f;
+				rotY += Input.GetAxisRaw ("Mouse X") * yMouseSensitivity * 0.02f;
 
-			// Clamp the X rotation
-			if (rotX < -90)
-				rotX = -90;
-			else if (rotX > 90)
-				rotX = 90;
-			this.transform.rotation = Quaternion.Euler (0, rotY, 0); // Rotates the collider
-			playerView.rotation = Quaternion.Euler (rotX, rotY, rotZ); // Rotates the camera
-
+				// Clamp the X rotation
+				if (rotX < -90)
+					rotX = -90;
+				else if (rotX > 90)
+					rotX = 90;
+				this.transform.rotation = Quaternion.Euler (0, rotY, 0); // Rotates the collider
+				playerView.rotation = Quaternion.Euler (rotX, rotY, rotZ); // Rotates the camera
+			}
 			// Set the camera's position to the transform
 			playerView.position = new Vector3 (transform.position.x,
 				transform.position.y + playerViewYOffset,
@@ -237,7 +278,7 @@ public class PlayerMovement : NetworkPlayerBehavior{
 				playerTopVelocity = playerVelocity.magnitude;
 			}
 		}
-		if (Input.GetKeyDown (KeyCode.R)) {
+		if (Input.GetKeyDown (KeyCode.M)) {
 			transform.position = Vector3.zero;
 		}
 		//assigning our network variables our final position and rotation at the end of the frame
@@ -524,24 +565,36 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__RESPAWN, BeardedManStudios.Forge.Networking.Receivers.Owner);
 	}
 	public override void Server_GetKill(RpcArgs args){
-		print ("DEE DEE DEE");	
 		playerScoreStruct.kills += 1;
 		networkObject.kills = playerScoreStruct.kills;
-		
-
-		//if (!networkObject.IsServer) {
-		//	return;
-		//}	
-
-		//string playerKilled = args.GetNext<string> ();
-		//object[] multicastArgs = {playerKilled};
-		//networkObject.SendRpc (NetworkPlayerBehavior.RPC_CLIENT__GET_KILL, BeardedManStudios.Forge.Networking.Receivers.Owner, multicastArgs);
+		if (gamemodeRef.killsAreScore){
+			networkObject.SendRpc(NetworkPlayerBehavior.RPC_CLIENT__ADD_SCORE, Receivers.Owner, gamemodeRef.scorePerKill);
+		}
 	}
 	public override void Server_Respawn(RpcArgs args){
 		SERVER_isDead = false;
 		networkObject.SendRpc (NetworkPlayerBehavior.RPC_MULTICAST__RESPAWN, BeardedManStudios.Forge.Networking.Receivers.All);
 	}
 
+	public override void Server_SetName(RpcArgs args){
+		string netName = args.GetNext<string> ();
+		playerName = netName;
+
+		Dictionary<uint,string> nameInfos = new Dictionary<uint,string>();
+
+		foreach (NetworkPlayerBehavior npb in gam.playerObjects){
+			PlayerMovement pm = (PlayerMovement)npb;
+			nameInfos.Add (npb.networkObject.NetworkId, pm.playerName);
+		}
+
+		networkObject.SendRpc(NetworkPlayerBehavior.RPC_CLIENT__GET_NAMES, true, Receivers.AllBuffered, Tools.JSON.SerializeNameDict(nameInfos));	
+	}
+	public override void Client_GetNames(RpcArgs args){
+		string namesStr = args.GetNext<string> ();
+		print (namesStr);
+		Dictionary<uint,string> names =  Tools.JSON.DeserializeNameDict(namesStr);
+		gam.ApplyNames (names);
+	}
 	//MULTICASTS
 	public override void Multicast_TakeDamage(RpcArgs args){
 		print ("DAMAGE?????");
@@ -569,6 +622,11 @@ public class PlayerMovement : NetworkPlayerBehavior{
 
 		if (GetKillEvent != null) GetKillEvent.Invoke((string)playerName, playerKilled);
 
+		//TODO: Remove circular dependcies
+		if (gamemodeRef.killsAreScore) {
+			int scoreAmount = gamemodeRef.scorePerKill;
+			networkObject.SendRpc (NetworkPlayerBehavior.RPC_CLIENT__ADD_SCORE, Receivers.Owner, scoreAmount);
+		}
 	}
 	public override void Multicast_GunFired(RpcArgs args){
 		print ("Shotgun visuals??");
@@ -588,6 +646,33 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		}
 		GetComponent<PlayerHealth> ().curHealth = networkObject.health;
 		if (RespawnEvent != null) RespawnEvent.Invoke();
+	}
+
+	public override void Client_ClearValues(RpcArgs args){
+		bool clearScore = args.GetNext<bool> ();
+		bool clearKills = args.GetNext<bool> ();
+		bool clearDeath = args.GetNext<bool> ();
+
+		if(clearDeath)
+			networkObject.death = 0;
+
+		if (clearKills)
+			networkObject.kills = 0;
+
+		if (clearScore)
+			networkObject.score = 0;
+	}
+
+	public override void Client_AddScore(RpcArgs args){
+		int amount = args.GetNext<int> ();
+		object[] scoreArgs = {amount, networkObject.team}; 
+		gamemodeRef.networkObject.SendRpc (NetworkGamemodeObjectBehavior.RPC_CLIENT__ADD_SCORE, Receivers.Owner, scoreArgs);
+	}
+
+	public float GetKDRatio(){
+		//prevent divide by zero, no NaNa's
+		int deathVisual = networkObject.death > 1 ? networkObject.death : 1;
+		return (float)networkObject.kills / deathVisual;
 	}
 
 	void OnTriggerEnter(Collider other){

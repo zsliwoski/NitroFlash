@@ -51,12 +51,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30fa64f23fb3e3e4997007572266a10b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topTargetTime: 600
-  intermissionTime: 30
+  topTargetTime: 10
+  intermissionTime: 10
   matchGamemode: 2
+  scorePerKill: 100
   usingTeams: 0
   usingScoreGoal: 0
+  killsAreScore: 0
   scoreGoal: 0
+  teamsInfos:
+  - teamColor: {r: 1, g: 0, b: 0, a: 1}
+    teamName: Wimbo
   gamemodeTypes:
   - Pre-Match
   - Intermission

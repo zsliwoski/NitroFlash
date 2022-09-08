@@ -45,66 +45,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (timeRunningChanged != null) timeRunningChanged(_timeRunning, timestep);
 			if (fieldAltered != null) fieldAltered("timeRunning", _timeRunning, timestep);
 		}
-		private int _teamAScore;
-		public event FieldEvent<int> teamAScoreChanged;
-		public InterpolateUnknown teamAScoreInterpolation = new InterpolateUnknown() { LerpT = 0f, Enabled = false };
-		public int teamAScore
-		{
-			get { return _teamAScore; }
-			set
-			{
-				// Don't do anything if the value is the same
-				if (_teamAScore == value)
-					return;
-
-				// Mark the field as dirty for the network to transmit
-				_dirtyFields[0] |= 0x2;
-				_teamAScore = value;
-				hasDirtyFields = true;
-			}
-		}
-
-		public void SetteamAScoreDirty()
-		{
-			_dirtyFields[0] |= 0x2;
-			hasDirtyFields = true;
-		}
-
-		private void RunChange_teamAScore(ulong timestep)
-		{
-			if (teamAScoreChanged != null) teamAScoreChanged(_teamAScore, timestep);
-			if (fieldAltered != null) fieldAltered("teamAScore", _teamAScore, timestep);
-		}
-		private int _teamBScore;
-		public event FieldEvent<int> teamBScoreChanged;
-		public InterpolateUnknown teamBScoreInterpolation = new InterpolateUnknown() { LerpT = 0f, Enabled = false };
-		public int teamBScore
-		{
-			get { return _teamBScore; }
-			set
-			{
-				// Don't do anything if the value is the same
-				if (_teamBScore == value)
-					return;
-
-				// Mark the field as dirty for the network to transmit
-				_dirtyFields[0] |= 0x4;
-				_teamBScore = value;
-				hasDirtyFields = true;
-			}
-		}
-
-		public void SetteamBScoreDirty()
-		{
-			_dirtyFields[0] |= 0x4;
-			hasDirtyFields = true;
-		}
-
-		private void RunChange_teamBScore(ulong timestep)
-		{
-			if (teamBScoreChanged != null) teamBScoreChanged(_teamBScore, timestep);
-			if (fieldAltered != null) fieldAltered("teamBScore", _teamBScore, timestep);
-		}
 		private bool _gamemodeActive;
 		public event FieldEvent<bool> gamemodeActiveChanged;
 		public InterpolateUnknown gamemodeActiveInterpolation = new InterpolateUnknown() { LerpT = 0f, Enabled = false };
@@ -118,7 +58,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					return;
 
 				// Mark the field as dirty for the network to transmit
-				_dirtyFields[0] |= 0x8;
+				_dirtyFields[0] |= 0x2;
 				_gamemodeActive = value;
 				hasDirtyFields = true;
 			}
@@ -126,7 +66,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public void SetgamemodeActiveDirty()
 		{
-			_dirtyFields[0] |= 0x8;
+			_dirtyFields[0] |= 0x2;
 			hasDirtyFields = true;
 		}
 
@@ -148,7 +88,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					return;
 
 				// Mark the field as dirty for the network to transmit
-				_dirtyFields[0] |= 0x10;
+				_dirtyFields[0] |= 0x4;
 				_gamemodeType = value;
 				hasDirtyFields = true;
 			}
@@ -156,7 +96,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public void SetgamemodeTypeDirty()
 		{
-			_dirtyFields[0] |= 0x10;
+			_dirtyFields[0] |= 0x4;
 			hasDirtyFields = true;
 		}
 
@@ -164,6 +104,66 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		{
 			if (gamemodeTypeChanged != null) gamemodeTypeChanged(_gamemodeType, timestep);
 			if (fieldAltered != null) fieldAltered("gamemodeType", _gamemodeType, timestep);
+		}
+		private int _teamAScore;
+		public event FieldEvent<int> teamAScoreChanged;
+		public InterpolateUnknown teamAScoreInterpolation = new InterpolateUnknown() { LerpT = 0f, Enabled = false };
+		public int teamAScore
+		{
+			get { return _teamAScore; }
+			set
+			{
+				// Don't do anything if the value is the same
+				if (_teamAScore == value)
+					return;
+
+				// Mark the field as dirty for the network to transmit
+				_dirtyFields[0] |= 0x8;
+				_teamAScore = value;
+				hasDirtyFields = true;
+			}
+		}
+
+		public void SetteamAScoreDirty()
+		{
+			_dirtyFields[0] |= 0x8;
+			hasDirtyFields = true;
+		}
+
+		private void RunChange_teamAScore(ulong timestep)
+		{
+			if (teamAScoreChanged != null) teamAScoreChanged(_teamAScore, timestep);
+			if (fieldAltered != null) fieldAltered("teamAScore", _teamAScore, timestep);
+		}
+		private int _teamBScore;
+		public event FieldEvent<int> teamBScoreChanged;
+		public InterpolateUnknown teamBScoreInterpolation = new InterpolateUnknown() { LerpT = 0f, Enabled = false };
+		public int teamBScore
+		{
+			get { return _teamBScore; }
+			set
+			{
+				// Don't do anything if the value is the same
+				if (_teamBScore == value)
+					return;
+
+				// Mark the field as dirty for the network to transmit
+				_dirtyFields[0] |= 0x10;
+				_teamBScore = value;
+				hasDirtyFields = true;
+			}
+		}
+
+		public void SetteamBScoreDirty()
+		{
+			_dirtyFields[0] |= 0x10;
+			hasDirtyFields = true;
+		}
+
+		private void RunChange_teamBScore(ulong timestep)
+		{
+			if (teamBScoreChanged != null) teamBScoreChanged(_teamBScore, timestep);
+			if (fieldAltered != null) fieldAltered("teamBScore", _teamBScore, timestep);
 		}
 
 		protected override void OwnershipChanged()
@@ -175,10 +175,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		public void SnapInterpolations()
 		{
 			timeRunningInterpolation.current = timeRunningInterpolation.target;
-			teamAScoreInterpolation.current = teamAScoreInterpolation.target;
-			teamBScoreInterpolation.current = teamBScoreInterpolation.target;
 			gamemodeActiveInterpolation.current = gamemodeActiveInterpolation.target;
 			gamemodeTypeInterpolation.current = gamemodeTypeInterpolation.target;
+			teamAScoreInterpolation.current = teamAScoreInterpolation.target;
+			teamBScoreInterpolation.current = teamBScoreInterpolation.target;
 		}
 
 		public override int UniqueIdentity { get { return IDENTITY; } }
@@ -186,10 +186,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		protected override BMSByte WritePayload(BMSByte data)
 		{
 			UnityObjectMapper.Instance.MapBytes(data, _timeRunning);
-			UnityObjectMapper.Instance.MapBytes(data, _teamAScore);
-			UnityObjectMapper.Instance.MapBytes(data, _teamBScore);
 			UnityObjectMapper.Instance.MapBytes(data, _gamemodeActive);
 			UnityObjectMapper.Instance.MapBytes(data, _gamemodeType);
+			UnityObjectMapper.Instance.MapBytes(data, _teamAScore);
+			UnityObjectMapper.Instance.MapBytes(data, _teamBScore);
 
 			return data;
 		}
@@ -200,14 +200,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			timeRunningInterpolation.current = _timeRunning;
 			timeRunningInterpolation.target = _timeRunning;
 			RunChange_timeRunning(timestep);
-			_teamAScore = UnityObjectMapper.Instance.Map<int>(payload);
-			teamAScoreInterpolation.current = _teamAScore;
-			teamAScoreInterpolation.target = _teamAScore;
-			RunChange_teamAScore(timestep);
-			_teamBScore = UnityObjectMapper.Instance.Map<int>(payload);
-			teamBScoreInterpolation.current = _teamBScore;
-			teamBScoreInterpolation.target = _teamBScore;
-			RunChange_teamBScore(timestep);
 			_gamemodeActive = UnityObjectMapper.Instance.Map<bool>(payload);
 			gamemodeActiveInterpolation.current = _gamemodeActive;
 			gamemodeActiveInterpolation.target = _gamemodeActive;
@@ -216,6 +208,14 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			gamemodeTypeInterpolation.current = _gamemodeType;
 			gamemodeTypeInterpolation.target = _gamemodeType;
 			RunChange_gamemodeType(timestep);
+			_teamAScore = UnityObjectMapper.Instance.Map<int>(payload);
+			teamAScoreInterpolation.current = _teamAScore;
+			teamAScoreInterpolation.target = _teamAScore;
+			RunChange_teamAScore(timestep);
+			_teamBScore = UnityObjectMapper.Instance.Map<int>(payload);
+			teamBScoreInterpolation.current = _teamBScore;
+			teamBScoreInterpolation.target = _teamBScore;
+			RunChange_teamBScore(timestep);
 		}
 
 		protected override BMSByte SerializeDirtyFields()
@@ -226,13 +226,13 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if ((0x1 & _dirtyFields[0]) != 0)
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _timeRunning);
 			if ((0x2 & _dirtyFields[0]) != 0)
-				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _teamAScore);
-			if ((0x4 & _dirtyFields[0]) != 0)
-				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _teamBScore);
-			if ((0x8 & _dirtyFields[0]) != 0)
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _gamemodeActive);
-			if ((0x10 & _dirtyFields[0]) != 0)
+			if ((0x4 & _dirtyFields[0]) != 0)
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _gamemodeType);
+			if ((0x8 & _dirtyFields[0]) != 0)
+				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _teamAScore);
+			if ((0x10 & _dirtyFields[0]) != 0)
+				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _teamBScore);
 
 			return dirtyFieldsData;
 		}
@@ -260,32 +260,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			}
 			if ((0x2 & readDirtyFlags[0]) != 0)
 			{
-				if (teamAScoreInterpolation.Enabled)
-				{
-					teamAScoreInterpolation.target = UnityObjectMapper.Instance.Map<int>(data);
-					teamAScoreInterpolation.Timestep = timestep;
-				}
-				else
-				{
-					_teamAScore = UnityObjectMapper.Instance.Map<int>(data);
-					RunChange_teamAScore(timestep);
-				}
-			}
-			if ((0x4 & readDirtyFlags[0]) != 0)
-			{
-				if (teamBScoreInterpolation.Enabled)
-				{
-					teamBScoreInterpolation.target = UnityObjectMapper.Instance.Map<int>(data);
-					teamBScoreInterpolation.Timestep = timestep;
-				}
-				else
-				{
-					_teamBScore = UnityObjectMapper.Instance.Map<int>(data);
-					RunChange_teamBScore(timestep);
-				}
-			}
-			if ((0x8 & readDirtyFlags[0]) != 0)
-			{
 				if (gamemodeActiveInterpolation.Enabled)
 				{
 					gamemodeActiveInterpolation.target = UnityObjectMapper.Instance.Map<bool>(data);
@@ -297,7 +271,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					RunChange_gamemodeActive(timestep);
 				}
 			}
-			if ((0x10 & readDirtyFlags[0]) != 0)
+			if ((0x4 & readDirtyFlags[0]) != 0)
 			{
 				if (gamemodeTypeInterpolation.Enabled)
 				{
@@ -308,6 +282,32 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				{
 					_gamemodeType = UnityObjectMapper.Instance.Map<int>(data);
 					RunChange_gamemodeType(timestep);
+				}
+			}
+			if ((0x8 & readDirtyFlags[0]) != 0)
+			{
+				if (teamAScoreInterpolation.Enabled)
+				{
+					teamAScoreInterpolation.target = UnityObjectMapper.Instance.Map<int>(data);
+					teamAScoreInterpolation.Timestep = timestep;
+				}
+				else
+				{
+					_teamAScore = UnityObjectMapper.Instance.Map<int>(data);
+					RunChange_teamAScore(timestep);
+				}
+			}
+			if ((0x10 & readDirtyFlags[0]) != 0)
+			{
+				if (teamBScoreInterpolation.Enabled)
+				{
+					teamBScoreInterpolation.target = UnityObjectMapper.Instance.Map<int>(data);
+					teamBScoreInterpolation.Timestep = timestep;
+				}
+				else
+				{
+					_teamBScore = UnityObjectMapper.Instance.Map<int>(data);
+					RunChange_teamBScore(timestep);
 				}
 			}
 		}
@@ -322,16 +322,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				_timeRunning = (int)timeRunningInterpolation.Interpolate();
 				RunChange_timeRunning(timeRunningInterpolation.Timestep);
 			}
-			if (teamAScoreInterpolation.Enabled && !teamAScoreInterpolation.current.Near(teamAScoreInterpolation.target, 0.0015f))
-			{
-				_teamAScore = (int)teamAScoreInterpolation.Interpolate();
-				RunChange_teamAScore(teamAScoreInterpolation.Timestep);
-			}
-			if (teamBScoreInterpolation.Enabled && !teamBScoreInterpolation.current.Near(teamBScoreInterpolation.target, 0.0015f))
-			{
-				_teamBScore = (int)teamBScoreInterpolation.Interpolate();
-				RunChange_teamBScore(teamBScoreInterpolation.Timestep);
-			}
 			if (gamemodeActiveInterpolation.Enabled && !gamemodeActiveInterpolation.current.Near(gamemodeActiveInterpolation.target, 0.0015f))
 			{
 				_gamemodeActive = (bool)gamemodeActiveInterpolation.Interpolate();
@@ -341,6 +331,16 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			{
 				_gamemodeType = (int)gamemodeTypeInterpolation.Interpolate();
 				RunChange_gamemodeType(gamemodeTypeInterpolation.Timestep);
+			}
+			if (teamAScoreInterpolation.Enabled && !teamAScoreInterpolation.current.Near(teamAScoreInterpolation.target, 0.0015f))
+			{
+				_teamAScore = (int)teamAScoreInterpolation.Interpolate();
+				RunChange_teamAScore(teamAScoreInterpolation.Timestep);
+			}
+			if (teamBScoreInterpolation.Enabled && !teamBScoreInterpolation.current.Near(teamBScoreInterpolation.target, 0.0015f))
+			{
+				_teamBScore = (int)teamBScoreInterpolation.Interpolate();
+				RunChange_teamBScore(teamBScoreInterpolation.Timestep);
 			}
 		}
 

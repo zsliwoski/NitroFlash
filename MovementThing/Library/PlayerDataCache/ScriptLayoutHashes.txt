@@ -1,6 +1,6 @@
 WindowsStandalone
 PlayerPath?
-C:/Users/Zarb/Desktop/UnityProjects/builds/NitroFlash/NitroFlash.exe
+C:/Users/Zarek/Desktop/UnityBuilds/NitroFlash/NitroFlash.exe
 38dc62466ba50fe41e26acbc194fe1b3 Assembly-CSharp.dll:.BMSLogger
 da3da096fb24081a3adcd9cb08d1cfc0 Assembly-CSharp.dll:.PlayerHealth
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
@@ -15,7 +15,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 92d7a83ea3c7404e484f3b2eed421855 UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 92d7a83ea3c7404e484f3b2eed421855 UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 d29057dcfb9f6888e22b5bc3f21d9b38 UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.GameController
+63a54ad5e31ae739e69e8d1c7dd37898 Assembly-CSharp.dll:.GameController
 e855b325789626cc48687444dde46a6e Assembly-CSharp.dll:.VoipStarter
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:BeardedManStudios.Forge.Networking.Unity.MainThreadManager
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
@@ -84,7 +84,7 @@ f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
 3ecea0c2e43f5d97a17c441bfcf59a7d Assembly-CSharp.dll:UnityEngine.PostProcessing.PostProcessingBehaviour
 05f9dc894388e51be726f0761335b20a Assembly-CSharp.dll:BeardedManStudios.Forge.Networking.Unity.NetworkManager
-479de9796df73c8d057ec2ff6e866a3a Assembly-CSharp.dll:.GamemodeBase
+c69aa0a1088666f55cedd44318b1eb55 Assembly-CSharp.dll:.GamemodeBase
 aa6e3deea008a107e6d0d700597daeff Assembly-CSharp.dll:.JetPack
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 4b12dd839b2293f8457cd67cc3610b85 UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack
@@ -127,6 +127,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 03bc754ac5fdb5e271fe0b327dc1abbd Assembly-CSharp.dll:BeardedManStudios.Forge.Networking.Unity.Lobby.LobbyPlayerItem
 c389914aa18aa28a4b31c54f1b0f6406 Assembly-CSharp.dll:.FPVisuals
 05f9dc894388e51be726f0761335b20a Assembly-CSharp.dll:BeardedManStudios.Forge.Networking.Unity.NetworkManager
+e05d12e1c63b58c902315958e93218ac Assembly-CSharp.dll:.GamemodeRules
 b260549fb42270702b5492bc79c40488 Assembly-CSharp.dll:.ChatManager
 87257c48d8c10be48e0df2f278d3bf27 Assembly-CSharp.dll:.PlayerMovement
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ChatMaker
@@ -156,7 +157,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ReceiveImpact
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
-767c75db5160ced2aac21d0c99bf7fa9 Assembly-CSharp.dll:.ScoreBoard
+9102f26d238d0c9635cace60e03175a8 Assembly-CSharp.dll:.ScoreBoard
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
@@ -169,4 +170,4 @@ d0aa0a96710cc5bced678444fc0ed963 Assembly-CSharp.dll:.UIHandler
 fa5ec9a297f948aa4e80c02f054fad02 Assembly-CSharp.dll:.Speedlines
 4d31ac4b160bd38e50bd82411b77c8dc Assembly-CSharp.dll:.WallCheck
 6263eb95a5e02ec60be579896cc09bd6 Assembly-CSharp.dll:.MultiplayerMenu
-e05d12e1c63b58c902315958e93218ac Assembly-CSharp.dll:.GamemodeRules
+c0b74e655a79c9587ad1c5cc702e5c8c Assembly-CSharp.dll:.MainMenuUIHandler

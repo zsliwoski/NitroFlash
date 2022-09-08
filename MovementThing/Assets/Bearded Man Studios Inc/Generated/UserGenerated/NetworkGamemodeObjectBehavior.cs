@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"int\"][]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"winningTeam\"][]]")]
+	[GeneratedRPC("{\"types\":[[\"int\"][][\"int\", \"int\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"winner\"][][\"amount\", \"team\"]]")]
 	public abstract partial class NetworkGamemodeObjectBehavior : NetworkBehavior
 	{
 		public const byte RPC_MULTICAST__ROUND_END = 0 + 5;
 		public const byte RPC_MULTICAST__ROUND_START = 1 + 5;
+		public const byte RPC_CLIENT__ADD_SCORE = 2 + 5;
 		
 		public NetworkGamemodeObjectNetworkObject networkObject = null;
 
@@ -25,6 +26,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			base.SetupHelperRpcs(networkObject);
 			networkObject.RegisterRpc("Multicast_RoundEnd", Multicast_RoundEnd, typeof(int));
 			networkObject.RegisterRpc("Multicast_RoundStart", Multicast_RoundStart);
+			networkObject.RegisterRpc("Client_AddScore", Client_AddScore, typeof(int), typeof(int));
 
 			MainThreadManager.Run(() =>
 			{
@@ -101,13 +103,17 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		/// <summary>
 		/// Arguments:
-		/// int winningTeam
+		/// int winner
 		/// </summary>
 		public abstract void Multicast_RoundEnd(RpcArgs args);
 		/// <summary>
 		/// Arguments:
 		/// </summary>
 		public abstract void Multicast_RoundStart(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// </summary>
+		public abstract void Client_AddScore(RpcArgs args);
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

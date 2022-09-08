@@ -5,16 +5,26 @@ using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine.UI;
 using AssemblyCSharp;
-
+	
 public class GamemodeBase : NetworkGamemodeObjectBehavior{
+	[System.Serializable]
+	public class TeamInfo{
+		public Color teamColor;
+		public string teamName;
+	}
+
 	float counter = 0.0f;
 
 	public int topTargetTime = 600;
 	public int intermissionTime = 30;
 	public int matchGamemode = 2;
+	public int scorePerKill = 100;
 	public bool usingTeams = false;
 	public bool usingScoreGoal = false;
+	public bool killsAreScore = false;
 	public int scoreGoal = 0;
+
+	public TeamInfo[] teamsInfos;
 
 	//EVENTS//
 	public delegate void RoundEndDelegate (int winningTeam);
@@ -57,21 +67,38 @@ public class GamemodeBase : NetworkGamemodeObjectBehavior{
 		}
 	}
 		
-
 	public void ClearScores(){
 		networkObject.teamAScore = 0;
 		networkObject.teamBScore = 0;
 	}
 
-	public void EndMatch(){
-		int a = networkObject.teamAScore;
-		int b = networkObject.teamBScore;
+	public int GetWinner(){
+		if (usingTeams) {
+			if (networkObject.teamAScore > networkObject.teamBScore) {
+				return 0;
+			} else if (networkObject.teamAScore == networkObject.teamBScore) {
+				return -1;
+			} else {
+				return 1;
+			}
+		} else {
+			//TODO: circular dependency here, should find a solution
+			GameController gam = FindObjectOfType<GameController> ();
+			NetworkPlayerBehavior np = gam.GetPlayerWithMost (GameController.PlayerOrderBy.SCORE);
 
-		int winningTeam = a < b ? 0 : 1;
-		
-		if (a == b){
-			winningTeam = 2;
+			//if we have a valid best player, they win
+			if (np != null) {
+				return (int)np.networkObject.NetworkId;
+			} else {
+				//otherwise return tie
+				return -1;
+			}
 		}
+	}
+
+	public void EndMatch(){
+		int winningTeam = GetWinner();
+
 		counter = 0;
 		networkObject.gamemodeActive = false;
 		networkObject.SendRpc (NetworkGamemodeObjectBehavior.RPC_MULTICAST__ROUND_END, BeardedManStudios.Forge.Networking.Receivers.All, winningTeam);
@@ -98,6 +125,17 @@ public class GamemodeBase : NetworkGamemodeObjectBehavior{
 		print("ROUND STARTED");
 		if (RoundStartEvent != null) {
 			RoundStartEvent.Invoke ();
+		}
+	}
+
+	public override void Client_AddScore(RpcArgs args){
+		int amount = args.GetNext<int> ();
+		int team = args.GetNext<int> ();
+
+		if (team == 0) {
+			networkObject.teamAScore += amount;
+		} else {
+			networkObject.teamBScore += amount;
 		}
 	}
 }

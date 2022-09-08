@@ -26,11 +26,11 @@ public class ScoreBoard : MonoBehaviour {
 	public void TryBindGameController(){
 		gc = FindObjectOfType<GameController> ();
 		if (gc != null) {
-			foreach (NetworkPlayerBehavior p in gc.playerObjects) {
-				AddCard ((PlayerMovement)p);
+			foreach (PlayerMovement p in gc.playerObjects) {
+				AddCard (p);
 			}
-			gc.PlayerJoinRosterEvent += (NetworkPlayerBehavior player) => (AddCard((PlayerMovement)player));
-			gc.PlayerLeaveRosterEvent += (NetworkPlayerBehavior player) => (RemoveCard((PlayerMovement)player));
+			gc.PlayerJoinRosterEvent += (PlayerMovement player) => (AddCard(player));
+			gc.PlayerLeaveRosterEvent += (PlayerMovement player) => (RemoveCard(player));
 		}
 	}
 	public void ShowBoard(bool visible){

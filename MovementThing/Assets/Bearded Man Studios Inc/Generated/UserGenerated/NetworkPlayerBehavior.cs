@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"int\", \"string\", \"uint\"][\"string\", \"uint\"][\"string\"][][][\"Vector3\", \"Quaternion\", \"string\"][\"string\"][][]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"damage\", \"instigator\", \"instigatorID\"][\"instigator\", \"instigatorID\"][\"killed\"][][][\"position\", \"rotation\", \"instigator\"][\"killed\"][][]]")]
+	[GeneratedRPC("{\"types\":[[\"int\", \"string\", \"uint\"][\"string\", \"uint\"][\"string\"][][][\"Vector3\", \"Quaternion\", \"string\"][\"string\"][][][\"string\"][\"string\"][\"bool\", \"bool\", \"bool\"][\"int\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"damage\", \"instigator\", \"instigatorID\"][\"instigator\", \"instigatorID\"][\"killed\"][][][\"position\", \"rotation\", \"instigator\"][\"killed\"][][][\"playerName\"][\"playerNamesJSON\"][\"score\", \"kills\", \"deaths\"][\"amount\"]]")]
 	public abstract partial class NetworkPlayerBehavior : NetworkBehavior
 	{
 		public const byte RPC_SERVER__TAKE_DAMAGE = 0 + 5;
@@ -17,6 +17,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		public const byte RPC_CLIENT__GET_KILL = 6 + 5;
 		public const byte RPC_MULTICAST__TAKE_DAMAGE = 7 + 5;
 		public const byte RPC_MULTICAST__RESPAWN = 8 + 5;
+		public const byte RPC_SERVER__SET_NAME = 9 + 5;
+		public const byte RPC_CLIENT__GET_NAMES = 10 + 5;
+		public const byte RPC_CLIENT__CLEAR_VALUES = 11 + 5;
+		public const byte RPC_CLIENT__ADD_SCORE = 12 + 5;
 		
 		public NetworkPlayerNetworkObject networkObject = null;
 
@@ -39,6 +43,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.RegisterRpc("Client_GetKill", Client_GetKill, typeof(string));
 			networkObject.RegisterRpc("Multicast_TakeDamage", Multicast_TakeDamage);
 			networkObject.RegisterRpc("Multicast_Respawn", Multicast_Respawn);
+			networkObject.RegisterRpc("Server_SetName", Server_SetName, typeof(string));
+			networkObject.RegisterRpc("Client_GetNames", Client_GetNames, typeof(string));
+			networkObject.RegisterRpc("Client_ClearValues", Client_ClearValues, typeof(bool), typeof(bool), typeof(bool));
+			networkObject.RegisterRpc("Client_AddScore", Client_AddScore, typeof(int));
 
 			MainThreadManager.Run(() =>
 			{
@@ -155,6 +163,22 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		/// Arguments:
 		/// </summary>
 		public abstract void Multicast_Respawn(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// </summary>
+		public abstract void Server_SetName(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// </summary>
+		public abstract void Client_GetNames(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// </summary>
+		public abstract void Client_ClearValues(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// </summary>
+		public abstract void Client_AddScore(RpcArgs args);
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

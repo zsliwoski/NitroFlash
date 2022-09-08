@@ -30,9 +30,11 @@ public class Shotgun : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown ("Fire1")) {
-			Shoot ();
-			print ("you shot man");
+		if (owner.GetMouseInputFrozen () == false) {
+			if (Input.GetButtonDown ("Fire1")) {
+				Shoot ();
+				print ("you shot man");
+			}
 		}
 		if (nextFire > 0.0f ){
 			nextFire -= Time.deltaTime;

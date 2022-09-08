@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedInterpol("{\"inter\":[0.15,0.15,0,0,0,0,0,0,0]")]
+	[GeneratedInterpol("{\"inter\":[0.15,0.15,0,0,0,0,0,0,0,0]")]
 	public partial class NetworkPlayerNetworkObject : NetworkObject
 	{
 		public const int IDENTITY = 6;
@@ -285,6 +285,36 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (isDeadChanged != null) isDeadChanged(_isDead, timestep);
 			if (fieldAltered != null) fieldAltered("isDead", _isDead, timestep);
 		}
+		private int _team;
+		public event FieldEvent<int> teamChanged;
+		public InterpolateUnknown teamInterpolation = new InterpolateUnknown() { LerpT = 0f, Enabled = false };
+		public int team
+		{
+			get { return _team; }
+			set
+			{
+				// Don't do anything if the value is the same
+				if (_team == value)
+					return;
+
+				// Mark the field as dirty for the network to transmit
+				_dirtyFields[1] |= 0x2;
+				_team = value;
+				hasDirtyFields = true;
+			}
+		}
+
+		public void SetteamDirty()
+		{
+			_dirtyFields[1] |= 0x2;
+			hasDirtyFields = true;
+		}
+
+		private void RunChange_team(ulong timestep)
+		{
+			if (teamChanged != null) teamChanged(_team, timestep);
+			if (fieldAltered != null) fieldAltered("team", _team, timestep);
+		}
 
 		protected override void OwnershipChanged()
 		{
@@ -303,6 +333,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			deathInterpolation.current = deathInterpolation.target;
 			grappleHeldInterpolation.current = grappleHeldInterpolation.target;
 			isDeadInterpolation.current = isDeadInterpolation.target;
+			teamInterpolation.current = teamInterpolation.target;
 		}
 
 		public override int UniqueIdentity { get { return IDENTITY; } }
@@ -318,6 +349,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			UnityObjectMapper.Instance.MapBytes(data, _death);
 			UnityObjectMapper.Instance.MapBytes(data, _grappleHeld);
 			UnityObjectMapper.Instance.MapBytes(data, _isDead);
+			UnityObjectMapper.Instance.MapBytes(data, _team);
 
 			return data;
 		}
@@ -360,6 +392,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			isDeadInterpolation.current = _isDead;
 			isDeadInterpolation.target = _isDead;
 			RunChange_isDead(timestep);
+			_team = UnityObjectMapper.Instance.Map<int>(payload);
+			teamInterpolation.current = _team;
+			teamInterpolation.target = _team;
+			RunChange_team(timestep);
 		}
 
 		protected override BMSByte SerializeDirtyFields()
@@ -385,6 +421,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _grappleHeld);
 			if ((0x1 & _dirtyFields[1]) != 0)
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _isDead);
+			if ((0x2 & _dirtyFields[1]) != 0)
+				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _team);
 
 			return dirtyFieldsData;
 		}
@@ -514,6 +552,19 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					RunChange_isDead(timestep);
 				}
 			}
+			if ((0x2 & readDirtyFlags[1]) != 0)
+			{
+				if (teamInterpolation.Enabled)
+				{
+					teamInterpolation.target = UnityObjectMapper.Instance.Map<int>(data);
+					teamInterpolation.Timestep = timestep;
+				}
+				else
+				{
+					_team = UnityObjectMapper.Instance.Map<int>(data);
+					RunChange_team(timestep);
+				}
+			}
 		}
 
 		public override void InterpolateUpdate()
@@ -565,6 +616,11 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			{
 				_isDead = (bool)isDeadInterpolation.Interpolate();
 				RunChange_isDead(isDeadInterpolation.Timestep);
+			}
+			if (teamInterpolation.Enabled && !teamInterpolation.current.Near(teamInterpolation.target, 0.0015f))
+			{
+				_team = (int)teamInterpolation.Interpolate();
+				RunChange_team(teamInterpolation.Timestep);
 			}
 		}
 

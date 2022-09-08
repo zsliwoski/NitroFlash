@@ -40,13 +40,15 @@ public class Grapple : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		HasValidGrapple();
-		if (Input.GetButtonDown ("Fire2")) {
-			if (nextfire <= 0)
-				ShootGrapple ();
-		}
-		if (Input.GetButtonUp ("Fire2")) {
-			if (held)
-				ReleaseGrapple ();
+		if (playermove.GetMouseInputFrozen () == false) {
+			if (Input.GetButtonDown ("Fire2")) {
+				if (nextfire <= 0)
+					ShootGrapple ();
+			}
+			if (Input.GetButtonUp ("Fire2")) {
+				if (held)
+					ReleaseGrapple ();
+			}
 		}
 
 		if (nextfire > 0)

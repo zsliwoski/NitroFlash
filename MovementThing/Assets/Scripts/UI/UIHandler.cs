@@ -27,20 +27,15 @@ public class UIHandler : MonoBehaviour {
 	public Text timerShadow;
 	public Text gameModeType;
 	public Text gameModeTypeShadow;
+
+	public GameObject matchInfoGroup;
+	public GameObject playerStatusGroup;
+	public GameObject playerSpeedGroup;
+	public GameObject gunCursorGroup;
+
 	GamemodeBase gameMode;
 
 	Vector2 showVel;
-	int PlayerHSpeed(){
-		if (pm){
-			showVel.x = pm.playerVelocity.x;
-			showVel.y = pm.playerVelocity.y;
-			return (int)Mathf.Floor(showVel.magnitude);
-		}
-		return 0;
-	}
-
-	void Start(){
-	}
 
 	void Update () {
 		UpdatePlayerStatus ();
@@ -94,5 +89,11 @@ public class UIHandler : MonoBehaviour {
 
 	public void ToggleScoreboard (bool showBoard){
 		sb.ShowBoard(showBoard);
+	}
+	public void SetGroupsActive(bool matchInfo = true, bool playerStatus = true, bool speedGroup = true, bool gunCursor = true){
+		matchInfoGroup.SetActive (matchInfo);
+		playerStatusGroup.SetActive (playerStatus);
+		playerSpeedGroup.SetActive(speedGroup);
+		gunCursorGroup.SetActive (gunCursor);
 	}
 }
