@@ -203,7 +203,33 @@ public class PlayerMovement : NetworkPlayerBehavior{
 				networkObject.score = 0;
 				networkObject.SendRpc(NetworkPlayerBehavior.RPC_MULTICAST__RESPAWN, true, Receivers.Owner);
 			};
-			gamemodeRef.RoundEndEvent += (winningTeam) => {print(string.Format("{0} wins!!!",winningTeam));};
+			gamemodeRef.RoundEndEvent += (winner) => {
+				//TODO: this is bloated, pawn it off onto functions
+				print(string.Format("{0} wins!!!",winner));
+				int winState = 0; //default to lose
+
+				//check win with team, then as a lone star
+				if (gamemodeRef.usingTeams){
+					if (winner == (int)networkObject.team){
+						winState = 2;	
+					}
+				}else{
+					if (winner == (int)networkObject.NetworkId){
+						winState = 2;
+					}
+				}
+
+				//tie
+				if (winner == -1){
+					winState = 1;
+				}
+
+				if (winState == 2){
+					int winRecord = PlayerPrefs.GetInt("TotalWins");
+					winRecord += 1;
+					PlayerPrefs.SetInt("TotalWins",winRecord);
+				}
+			};
 		} else {
 			//TODO:Change based on team
 			gameObject.tag = "Enemy";
@@ -567,6 +593,18 @@ public class PlayerMovement : NetworkPlayerBehavior{
 	public override void Server_GetKill(RpcArgs args){
 		playerScoreStruct.kills += 1;
 		networkObject.kills = playerScoreStruct.kills;
+
+		//Stat logging
+		int killRecord = PlayerPrefs.GetInt ("HighestKills");
+		float kdRecord = PlayerPrefs.GetFloat ("HighestKD");
+		float curKD = GetKDRatio ();
+		if (curKD > kdRecord) {
+			PlayerPrefs.SetFloat ("HighestKD", curKD);
+		}
+		if (networkObject.kills > killRecord) {
+			PlayerPrefs.SetInt ("HighestKills", networkObject.kills);
+		}
+
 		if (gamemodeRef.killsAreScore){
 			networkObject.SendRpc(NetworkPlayerBehavior.RPC_CLIENT__ADD_SCORE, Receivers.Owner, gamemodeRef.scorePerKill);
 		}
@@ -629,7 +667,7 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		}
 	}
 	public override void Multicast_GunFired(RpcArgs args){
-		print ("Shotgun visuals??");
+		print ("Shotgun visuals???");
 	}
 	public override void Multicast_Respawn(RpcArgs args){
 		print ("RESPAWN");
