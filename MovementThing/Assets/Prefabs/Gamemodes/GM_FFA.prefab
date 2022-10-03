@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30fa64f23fb3e3e4997007572266a10b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topTargetTime: 10
-  intermissionTime: 10
+  topTargetTime: 180
+  intermissionTime: 30
   matchGamemode: 2
   scorePerKill: 100
   usingTeams: 0

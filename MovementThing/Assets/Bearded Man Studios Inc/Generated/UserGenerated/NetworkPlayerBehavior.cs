@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"int\", \"string\", \"uint\"][\"string\", \"uint\"][\"string\"][][][\"Vector3\", \"Quaternion\", \"string\"][\"string\"][][][\"string\"][\"string\"][\"bool\", \"bool\", \"bool\"][\"int\"]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"damage\", \"instigator\", \"instigatorID\"][\"instigator\", \"instigatorID\"][\"killed\"][][][\"position\", \"rotation\", \"instigator\"][\"killed\"][][][\"playerName\"][\"playerNamesJSON\"][\"score\", \"kills\", \"deaths\"][\"amount\"]]")]
+	[GeneratedRPC("{\"types\":[[\"int\", \"string\", \"uint\"][\"string\", \"uint\"][\"string\"][][][\"Vector3\", \"Quaternion\", \"string\"][\"string\"][][][\"string\"][\"string\"][\"bool\", \"bool\", \"bool\"][\"int\"][\"bool\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"damage\", \"instigator\", \"instigatorID\"][\"instigator\", \"instigatorID\"][\"killed\"][][][\"position\", \"rotation\", \"instigator\"][\"killed\"][][][\"playerName\"][\"playerNamesJSON\"][\"score\", \"kills\", \"deaths\"][\"amount\"][\"isMidAir\"]]")]
 	public abstract partial class NetworkPlayerBehavior : NetworkBehavior
 	{
 		public const byte RPC_SERVER__TAKE_DAMAGE = 0 + 5;
@@ -21,6 +21,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		public const byte RPC_CLIENT__GET_NAMES = 10 + 5;
 		public const byte RPC_CLIENT__CLEAR_VALUES = 11 + 5;
 		public const byte RPC_CLIENT__ADD_SCORE = 12 + 5;
+		public const byte RPC_MULTICAST__JUMP = 13 + 5;
 		
 		public NetworkPlayerNetworkObject networkObject = null;
 
@@ -47,6 +48,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.RegisterRpc("Client_GetNames", Client_GetNames, typeof(string));
 			networkObject.RegisterRpc("Client_ClearValues", Client_ClearValues, typeof(bool), typeof(bool), typeof(bool));
 			networkObject.RegisterRpc("Client_AddScore", Client_AddScore, typeof(int));
+			networkObject.RegisterRpc("Multicast_Jump", Multicast_Jump, typeof(bool));
 
 			MainThreadManager.Run(() =>
 			{
@@ -179,6 +181,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		/// Arguments:
 		/// </summary>
 		public abstract void Client_AddScore(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// </summary>
+		public abstract void Multicast_Jump(RpcArgs args);
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

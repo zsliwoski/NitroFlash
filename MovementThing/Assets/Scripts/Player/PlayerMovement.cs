@@ -139,7 +139,7 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		}
 		return grounded;
 	}
-
+		
 	//TODO: this method is evolving, use it to clean up other things as well
 	protected void OnNetworkDisconnect(){
 		if (DisconnectEvent != null){
@@ -459,6 +459,7 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		if (JumpEvent != null) {
 			JumpEvent.Invoke (midAir);
 		}
+		networkObject.SendRpc (NetworkPlayerBehavior.RPC_MULTICAST__JUMP, BeardedManStudios.Forge.Networking.Receivers.All, midAir);
 	}
 
 	//calculates friction to add
@@ -705,6 +706,15 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		int amount = args.GetNext<int> ();
 		object[] scoreArgs = {amount, networkObject.team}; 
 		gamemodeRef.networkObject.SendRpc (NetworkGamemodeObjectBehavior.RPC_CLIENT__ADD_SCORE, Receivers.Owner, scoreArgs);
+	}
+
+	public override void Multicast_Jump(RpcArgs args){
+		if (networkObject.IsOwner) {
+		}
+		bool midAir = args.GetNext<bool> ();
+		if (JumpEvent != null) {
+			JumpEvent.Invoke (midAir);
+		}
 	}
 
 	public float GetKDRatio(){

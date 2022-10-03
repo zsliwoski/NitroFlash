@@ -22,4 +22,8 @@ public class MainMenuUIHandler : MonoBehaviour {
 		PlayerPrefs.SetString ("PlayerName", funName);
 		nameDisplay.text = funName;
 	}
+
+	public void QuitPressed(){
+		Application.Quit ();
+	}
 }

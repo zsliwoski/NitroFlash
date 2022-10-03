@@ -75,8 +75,8 @@ public class GameController : MonoBehaviour {
 
 				case PlayerOrderBy.KD_RATIO:
 					//TODO: see if this logic is necessary
-					a = retVal.networkObject.score;
-					b = np.networkObject.score;
+					a = retVal.GetKDRatio();
+					b = np.GetKDRatio();
 					break;
 				}
 

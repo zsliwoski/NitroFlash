@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedInterpol("{\"inter\":[0.15,0.15,0,0,0,0,0,0,0,0]")]
+	[GeneratedInterpol("{\"inter\":[0.15,0.15,0,0,0,0,0,0,0,0,0]")]
 	public partial class NetworkPlayerNetworkObject : NetworkObject
 	{
 		public const int IDENTITY = 6;
@@ -315,6 +315,36 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (teamChanged != null) teamChanged(_team, timestep);
 			if (fieldAltered != null) fieldAltered("team", _team, timestep);
 		}
+		private bool _wallHeld;
+		public event FieldEvent<bool> wallHeldChanged;
+		public InterpolateUnknown wallHeldInterpolation = new InterpolateUnknown() { LerpT = 0f, Enabled = false };
+		public bool wallHeld
+		{
+			get { return _wallHeld; }
+			set
+			{
+				// Don't do anything if the value is the same
+				if (_wallHeld == value)
+					return;
+
+				// Mark the field as dirty for the network to transmit
+				_dirtyFields[1] |= 0x4;
+				_wallHeld = value;
+				hasDirtyFields = true;
+			}
+		}
+
+		public void SetwallHeldDirty()
+		{
+			_dirtyFields[1] |= 0x4;
+			hasDirtyFields = true;
+		}
+
+		private void RunChange_wallHeld(ulong timestep)
+		{
+			if (wallHeldChanged != null) wallHeldChanged(_wallHeld, timestep);
+			if (fieldAltered != null) fieldAltered("wallHeld", _wallHeld, timestep);
+		}
 
 		protected override void OwnershipChanged()
 		{
@@ -334,6 +364,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			grappleHeldInterpolation.current = grappleHeldInterpolation.target;
 			isDeadInterpolation.current = isDeadInterpolation.target;
 			teamInterpolation.current = teamInterpolation.target;
+			wallHeldInterpolation.current = wallHeldInterpolation.target;
 		}
 
 		public override int UniqueIdentity { get { return IDENTITY; } }
@@ -350,6 +381,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			UnityObjectMapper.Instance.MapBytes(data, _grappleHeld);
 			UnityObjectMapper.Instance.MapBytes(data, _isDead);
 			UnityObjectMapper.Instance.MapBytes(data, _team);
+			UnityObjectMapper.Instance.MapBytes(data, _wallHeld);
 
 			return data;
 		}
@@ -396,6 +428,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			teamInterpolation.current = _team;
 			teamInterpolation.target = _team;
 			RunChange_team(timestep);
+			_wallHeld = UnityObjectMapper.Instance.Map<bool>(payload);
+			wallHeldInterpolation.current = _wallHeld;
+			wallHeldInterpolation.target = _wallHeld;
+			RunChange_wallHeld(timestep);
 		}
 
 		protected override BMSByte SerializeDirtyFields()
@@ -423,6 +459,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _isDead);
 			if ((0x2 & _dirtyFields[1]) != 0)
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _team);
+			if ((0x4 & _dirtyFields[1]) != 0)
+				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _wallHeld);
 
 			return dirtyFieldsData;
 		}
@@ -565,6 +603,19 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					RunChange_team(timestep);
 				}
 			}
+			if ((0x4 & readDirtyFlags[1]) != 0)
+			{
+				if (wallHeldInterpolation.Enabled)
+				{
+					wallHeldInterpolation.target = UnityObjectMapper.Instance.Map<bool>(data);
+					wallHeldInterpolation.Timestep = timestep;
+				}
+				else
+				{
+					_wallHeld = UnityObjectMapper.Instance.Map<bool>(data);
+					RunChange_wallHeld(timestep);
+				}
+			}
 		}
 
 		public override void InterpolateUpdate()
@@ -621,6 +672,11 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			{
 				_team = (int)teamInterpolation.Interpolate();
 				RunChange_team(teamInterpolation.Timestep);
+			}
+			if (wallHeldInterpolation.Enabled && !wallHeldInterpolation.current.Near(wallHeldInterpolation.target, 0.0015f))
+			{
+				_wallHeld = (bool)wallHeldInterpolation.Interpolate();
+				RunChange_wallHeld(wallHeldInterpolation.Timestep);
 			}
 		}
 
