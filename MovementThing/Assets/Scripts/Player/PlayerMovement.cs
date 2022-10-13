@@ -197,6 +197,10 @@ public class PlayerMovement : NetworkPlayerBehavior{
 
 			networkObject.SendRpc (NetworkPlayerBehavior.RPC_SERVER__SET_NAME, Receivers.Server, playerName);
 
+			string cust = GetComponentInChildren<CharacterPaint> (true).Serialize ();
+			object[] customizationArgs = { cust, networkObject.NetworkId };
+			networkObject.SendRpc (NetworkPlayerBehavior.RPC_MULTICAST__SEND_CUSTOMIZATION, Receivers.AllBuffered, customizationArgs);
+
 			//clears scores
 			gamemodeRef = FindObjectOfType<GamemodeBase>();
 			gamemodeRef.RoundStartEvent += () => {
@@ -231,6 +235,7 @@ public class PlayerMovement : NetworkPlayerBehavior{
 				}
 			};
 		} else {
+			
 			//TODO:Change based on team
 			gameObject.tag = "Enemy";
 			CapsuleCollider c = gameObject.AddComponent<CapsuleCollider> ();
@@ -715,6 +720,29 @@ public class PlayerMovement : NetworkPlayerBehavior{
 		if (JumpEvent != null) {
 			JumpEvent.Invoke (midAir);
 		}
+	}
+
+	public override void Client_ReceiveCustomization(RpcArgs args){
+		string data = args.GetNext<string>();
+		uint playerID = args.GetNext<uint> ();
+		print(data + ":  " + playerID.ToString());
+		PlayerMovement target = gam.GetNetworkPlayerFromID (playerID);
+		target.GetComponentInChildren<CharacterPaint> (true).Deserialize (data);
+	}
+
+	public override void Multicast_SendCustomization(RpcArgs args){
+		string data = args.GetNext<string>();
+		uint playerID = args.GetNext<uint> ();
+
+		print(data + ":  " + playerID.ToString());
+
+		GetComponentInChildren<CharacterPaint> (true).Deserialize (data);
+
+		PlayerMovement us = gam.GetOwnedPlayer ();
+		string cust = us.GetComponentInChildren<CharacterPaint> (true).Serialize ();
+		object[] customizationArgs = { cust, us.networkObject.NetworkId };
+		networkObject.SendRpc (NetworkPlayerBehavior.RPC_CLIENT__RECEIVE_CUSTOMIZATION, Receivers.Target, customizationArgs);
+		
 	}
 
 	public float GetKDRatio(){

@@ -21,10 +21,11 @@ public class CharacterPaint : MonoBehaviour {
 	public Renderer model;
 	public Texture2D[] faceTextures;
 	public int curFaceTex = 0;
-
+	public bool loadOnStart = false;
 	void Start(){
-		LoadSavedColors ();
-		LoadFace ();
+		if (loadOnStart) {
+			Deserialize (Serialize());
+		}
 	}
 
 	public void SetFace(int faceNum){
@@ -103,6 +104,45 @@ public class CharacterPaint : MonoBehaviour {
 		if (CharacterLoadEvent != null) {
 			CharacterLoadEvent.Invoke ();
 		}
+	}
+
+	public string Serialize(){
+		string serial = "";
+
+		foreach (string property in bodyColPropNames) {
+			string prop = PlayerPrefs.GetString ("$body$" + property).Replace("$body$","");
+			serial += prop + '|';
+		}
+
+		foreach (string property in faceColPropNames) {
+			string prop = PlayerPrefs.GetString ("$face$" + property).Replace ("$face$", "");
+			serial += prop + '|';
+		}
+
+		serial += PlayerPrefs.GetInt ("$face$_OverlayTex");
+		return serial;
+	}
+
+	public void Deserialize(string stringToApply){
+		Dictionary<string,string> bodyColors = new Dictionary<string, string>();
+		Dictionary<string,string> faceColors = new Dictionary<string, string>();
+
+		string[] dataStrings = stringToApply.Split ('|');
+		int cursorPos = 0;
+
+		foreach (string property in bodyColPropNames) {
+			bodyColors.Add (property, dataStrings[cursorPos]);
+			cursorPos++;
+		}
+
+		foreach (string property in faceColPropNames) {
+			faceColors.Add (property, dataStrings[cursorPos]);
+			cursorPos++;
+		}
+
+		int faceID = int.Parse(dataStrings[cursorPos]);
+		SetFace (faceID);
+		ApplyColors (bodyColors, faceColors);
 	}
 
 	public void LoadFace(){

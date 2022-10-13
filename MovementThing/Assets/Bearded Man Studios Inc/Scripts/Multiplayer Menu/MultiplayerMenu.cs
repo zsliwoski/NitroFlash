@@ -105,7 +105,6 @@ public class MultiplayerMenu : MonoBehaviour
 		if (_matchmaking)
 			return;
 
-		SetToggledButtons(false);
 		_matchmaking = true;
 
 		if (mgr == null && networkManager == null)
@@ -132,21 +131,21 @@ public class MultiplayerMenu : MonoBehaviour
 		});
 	}
 
-	public void Host()
+	public void Host(int maxPlayers, string portString)
 	{
 		NetWorker server;
 
 		if (useTCP)
 		{
-			server = new TCPServer(64);
+			server = new TCPServer(maxPlayers);
 			((TCPServer)server).Connect();
 		}
 		else
 		{
-			server = new UDPServer(64);
+			server = new UDPServer(maxPlayers);
 
 			if (natServerHost.Trim().Length == 0)
-				((UDPServer)server).Connect(ipAddress.text, ushort.Parse(portNumber.text));
+				((UDPServer)server).Connect(ipAddress.text, ushort.Parse(portString));
 			else
 				((UDPServer)server).Connect(natHost: natServerHost, natPort: natServerPort);
 		}
@@ -158,20 +157,6 @@ public class MultiplayerMenu : MonoBehaviour
 		//LobbyService.Instance.Initialize(server);
 
 		Connected(server);
-	}
-
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.H))
-			Host();
-		else if (Input.GetKeyDown(KeyCode.C))
-			Connect();
-		else if (Input.GetKeyDown(KeyCode.L))
-		{
-			NetWorker.localServerLocated -= TestLocalServerFind;
-			NetWorker.localServerLocated += TestLocalServerFind;
-			NetWorker.RefreshLocalUdpListings();
-		}
 	}
 
 	private void TestLocalServerFind(NetWorker.BroadcastEndpoints endpoint, NetWorker sender)

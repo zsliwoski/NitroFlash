@@ -22,6 +22,8 @@ namespace BeardedManStudios.Forge.Networking.Unity
 		public GameObject networkManager = null;
 		TCPClient client = null;
 
+		public Text countText;
+
 		private void Awake()
 		{
 			MainThreadManager.Create();
@@ -32,15 +34,16 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			Refresh();
 		}
 
-		public void CreateServerOption(string name, UnityEngine.Events.UnityAction callback)
+		public void CreateServerOption(string name, int playerCount, int maxPlayers, UnityEngine.Events.UnityAction callback)
 		{
 			MainThreadManager.Run(() =>
 			{
 				var option = Instantiate(serverOption);
 				option.transform.SetParent(content);
 				var browserItem = option.GetComponent<ServerBrowserItem>();
-				if (browserItem != null)
-					browserItem.SetData(name, callback);
+				if (browserItem != null){
+						browserItem.SetData(name, playerCount, maxPlayers, callback);
+				}
 			});
 		}
 
@@ -64,7 +67,6 @@ namespace BeardedManStudios.Forge.Networking.Unity
 					getData.Add("id", gameId);
 					getData.Add("type", gameType);
 					getData.Add("mode", gameMode);
-
 					sendData.Add("get", getData);
 
 					// Send the request to the server
@@ -88,7 +90,6 @@ namespace BeardedManStudios.Forge.Networking.Unity
 					if (data["hosts"] != null)
 					{
 						MasterServerResponse response = new MasterServerResponse(data["hosts"].AsArray);
-
 						if (response != null && response.serverResponse.Count > 0)
 						{
 							// Go through all of the available hosts and add them to the server browser
@@ -98,9 +99,10 @@ namespace BeardedManStudios.Forge.Networking.Unity
 								string address = server.Address;
 								ushort port = server.Port;
 								string name = server.Name;
-
+								int playerCount = server.PlayerCount;
+								int maxPlayers = server.MaxPlayers;
 								// name, address, port, comment, type, mode, players, maxPlayers, protocol
-								CreateServerOption(name, () =>
+								CreateServerOption(name, playerCount, maxPlayers, () =>
 								{
 									// Determine which protocol should be used when this client connects
 									NetWorker socket = null;
@@ -138,6 +140,9 @@ namespace BeardedManStudios.Forge.Networking.Unity
 						client.Disconnect(true);
 						client = null;
 					}
+					MainThreadManager.Run(()=>{
+						countText.text = "COUNT: " + content.childCount;
+					});
 				}
 			};
 

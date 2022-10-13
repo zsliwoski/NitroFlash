@@ -18,6 +18,9 @@ public class UI_OptionCycler : MonoBehaviour {
 	public List<OptionCyclerOption> optionsList;
 	public Text optionDisplay;
 	int curOption = 0;
+	public int currentOptionIndex {get{return curOption;}}
+	public string currentOptionID {get{return optionsList [curOption].key;}}
+	public string currentOptionDisplayName {get{return optionsList [curOption].displayName;}}
 
 	// Use this for initialization
 	void Start () {

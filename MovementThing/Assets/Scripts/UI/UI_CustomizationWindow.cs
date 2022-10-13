@@ -43,7 +43,7 @@ public class UI_CustomizationWindow : MonoBehaviour {
 	string curFaceID = "";
 
 	bool changesMade = false;
-
+	bool defaultsLoaded = false;
 	// Use this for initialization
 	void Start () {
 		/*foreach (CustomizationFaceChoice cfc in userFaceChoiceList) {
@@ -76,7 +76,11 @@ public class UI_CustomizationWindow : MonoBehaviour {
 				charPaint.SetFace(0);
 			}
 		};
+		//hacky race condition, bleh
 		charPaint.CharacterLoadEvent += SetDefaults;
+		if (defaultsLoaded == false) {
+			SetDefaults ();
+		}
 	}
 	public void SaveCustomization(){
 		charPaint.SaveCurrentColors ();
@@ -85,6 +89,10 @@ public class UI_CustomizationWindow : MonoBehaviour {
 		applyButton.interactable = changesMade;
 	}
 	void SetDefaults(){
+		if (defaultsLoaded) {
+			return;
+		}
+		defaultsLoaded = true;
 		bodyColorOptions.SetCurrentOption (0);
 		faceColorOptions.SetCurrentOption (0);
 		bodyColAdjuster.SetColor(charPaint.GetChannelColor("_Color", false));

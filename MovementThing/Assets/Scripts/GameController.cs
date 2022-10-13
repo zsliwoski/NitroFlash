@@ -87,7 +87,17 @@ public class GameController : MonoBehaviour {
 		}
 		return retVal;
 	}
-	
+
+	//Returns first instance of a player that the client owns
+	public PlayerMovement GetOwnedPlayer(){
+		foreach (PlayerMovement np in playerObjects) {
+			if (np.networkObject.IsOwner) {
+				return np;
+			}
+		}
+		return null;
+	}
+
 	//SERVER USED FUNCTIONS
 	public PlayerMovement GetNetworkPlayerFromID(uint id){
 		foreach (PlayerMovement np in playerObjects) {

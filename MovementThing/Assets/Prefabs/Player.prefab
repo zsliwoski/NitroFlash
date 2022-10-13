@@ -200,6 +200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4813083736722372}
   - component: {fileID: 95109886647343274}
+  - component: {fileID: 114682264918011306}
   m_Layer: 0
   m_Name: tpmodel (1)
   m_TagString: Untagged
@@ -3192,6 +3193,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b9f27fa2ea7e904098a0966d9026cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114682264918011306
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1136575889012798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c32543b0127fa71429d76731d5d3bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  model: {fileID: 137130688138787964}
+  faceTextures:
+  - {fileID: 2800000, guid: 11fc62e5e96e92f42aa7c1888bc8b6e4, type: 3}
+  - {fileID: 2800000, guid: c00a402f8b307bc428b6b2b5f1331bdc, type: 3}
+  - {fileID: 2800000, guid: d54479bc7119cae4f8bf5096e74c0714, type: 3}
+  curFaceTex: 0
+  loadOnStart: 0
 --- !u!114 &114701278629013452
 MonoBehaviour:
   m_ObjectHideFlags: 1

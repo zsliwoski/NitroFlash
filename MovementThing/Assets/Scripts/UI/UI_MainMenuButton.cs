@@ -4,9 +4,5 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_MainMenuButton : MonoBehaviour{
-	public AudioClip hoverSound;
-	Button butt;
-	void Start(){
-		butt.GetComponent<Button> ();
-	}
+
 }
